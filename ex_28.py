@@ -15,7 +15,7 @@ def init_id_mat(size):
 def print_vec(mat):
     for i in range(len(mat)):
         for j in mat[i]:
-            print("%.3f" % j, end="\t")
+            print( j, end="\t")
         print()
 
 def print_mat(mat, b):
@@ -96,7 +96,7 @@ def yakobi(mat, vec_b):
     for i in range(size):
         print(f"X{i + 1}", end="\t\t")
     print()
-    return step(init_def_vector(size))
+    return step(init_def_vector(size)), index
 
 
 
@@ -158,16 +158,77 @@ def invert_mat(mat):
             mat = mul_mat(elem_mat, mat)
             inv_mat = mul_mat(elem_mat, inv_mat)
     return inv_mat
+def suffix(num, time):
+    def num_after_point(x):
+        s = str(x)
+        if not '.' in s:
+            return 0
+        return len(s) - s.index('.') - 1
+
+    def eps():
+        eps = 1
+        while 1 + eps > 1:
+            eps /= 2
+        eps *= 2
+        return eps
+    #time format: ddhhmm
+    num = float(num)
+    singed = False
+    if num < 0:
+        singed = True
+        num *= -1
+    suf = []
+    suf[:0] = str(time)
+    suf = [0, 0, 0, 0, 0] + suf
+    listok = []
+    listok = str(num).split(".")
+    if len(listok[1]) == 1:
+        if int(listok[1][0]) == 0:
+            ans = int(listok[0]) + (float(time)/10000000000)
+        else:
+            ans = int(listok[0]) + (float(listok[1])/10) + (float(time)/1000000000000)
+        if singed:
+            return ans * -1
+        else:
+            return ans
+    x = []
+    x[:0] = listok[1]
+    num_pref = len(listok[0])
+    max_digits = num_after_point(eps()) - 1 - len(listok[0]) - 11
+    x = x[0:max_digits - 1]
+    last_digit = int(x[-1])
+    if last_digit == 0 or last_digit < 5:
+        x.pop(-1)
+    else:
+        x.pop(-1)
+        x[-1] = int(x[-1]) + 1
+    listok[1] = x + suf
+    tmp = str(listok[0]) + '.'
+    while len(listok[1]) != 0:
+        tmp += str(listok[1][0])
+        listok[1].pop(0)
+    return tmp
+
+
 def main():
     global epsilon, mat, b, solvable
     epsilon = 0.00001
-    mat = [[0.04, 0.01, -0.01], [0.2, 0.5, -0.2], [1, 2, 4]]
-    b = [[0.06], [0.3], [11]]
-    print_mat(mat, b)
+    mat = [[1, 2, -2], [1, 1, 1], [2, 2, 1]]
+    b = [[7], [2], [5]]
+    print("ex 28")
     print("Jacobi:")
-    yakobi(mat, b)
+    ans_vec, yak_attempts = yakobi(mat, b)
+    for i in range(len(ans_vec)):
+        ans_vec[i][0] = suffix(ans_vec[i][0], 131425)
+    print("yakobi solve in {0} attempts:".format(yak_attempts))
+    print_vec(ans_vec)
+    ans_vec = way_A(mat, b)
+    for i in range(len(ans_vec)):
+        ans_vec[i][0] = suffix(ans_vec[i][0], 131425)
     print("A_inv * b:")
-    print_vec(way_A(mat,b))
+    print_vec(ans_vec)
+
+
 
 
 epsilon = 0

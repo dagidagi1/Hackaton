@@ -16,6 +16,7 @@ def suffix(num, time):
     #time format: ddhhmm
     suf = []
     suf[:0] = str(time)
+    suf = [0,0,0,0,0] + suf
     listok = []
     listok = str(num).split(".")
     if len(listok[1]) == 1:
@@ -37,6 +38,7 @@ def suffix(num, time):
     listok[1] = x + suf
     tmp = int(listok[0])
     exp = 10 ** -1
+    print(listok)
     while len(listok[1]) != 0:
         tmp += int(listok[1][0]) * exp
         listok[1].pop(0)
@@ -48,6 +50,5 @@ def suffix(num, time):
 
 
 
-print(suffix(3.0, 131413))
-print(suffix(3.1,131413))
+print(suffix(3.123123, 131413))
 

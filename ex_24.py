@@ -1,6 +1,5 @@
 #Arkadi Yakubov 208064162
 #Mikhail diachkov 336426176
-
 def init_id_mat(size):
     id_mat = []
     for i in range(size):
@@ -16,7 +15,7 @@ def init_id_mat(size):
 def print_vec(mat):
     for i in range(len(mat)):
         for j in mat[i]:
-            print("%.3f" % j, end="\t")
+            print( j, end="\t")
         print()
 
 def print_mat(mat, b):
@@ -24,90 +23,6 @@ def print_mat(mat, b):
         for j in mat[i]:
             print("%.3f" % j, end="\t")
         print("%.3f" % b[i][0])
-
-def way_A(mat, b):
-    inv_mat = invert_mat(mat)
-    return mul_mat(inv_mat, b)
-
-def mul_mat(mat1, mat2):
-    def get_col(mat, i):
-        col = []
-        for _ in mat:
-            col.append(_[i])
-        return col
-
-    def mul_row_col(row, col):
-        x = 0
-        for i in range(len(row)):
-            x += row[i] * col[i]
-        return x
-
-    if len(mat1[0]) != len(mat2):
-        print("Can't multiply this matrix!")
-        return None
-    new_mat = []
-    for i in range(len(mat1)):
-        row = []
-        for j in range(len(mat2[0])):
-            row.append(mul_row_col(mat1[i], get_col(mat2, j)))
-        new_mat.append(row)
-    return new_mat
-
-
-def invert_mat(mat):
-    inv_mat = init_id_mat(len(mat))
-    for j in range(len(mat)):
-        for i in range(j, len(mat)):
-            elem_mat = init_id_mat(len(mat))
-            if i == j:
-                max_piv = abs(mat[i][i])
-                max_index = i
-                for k in range(i + 1, len(mat)):
-                    if abs(mat[k][j]) > max_piv:
-                        max_index = k
-                        max_piv = abs(mat[k][j])
-                if max_index != i:
-                    mat[i], mat[max_index] = mat[max_index], mat[i]
-                    inv_mat[i], inv_mat[max_index] = inv_mat[max_index], inv_mat[i]
-                elem_mat[i][i] = 1/mat[i][i]
-                mat = mul_mat(elem_mat, mat)
-                inv_mat = mul_mat(elem_mat, inv_mat)
-            else:
-                elem_mat[i][j] = -mat[i][j]/mat[j][j]
-                mat = mul_mat(elem_mat, mat)
-                inv_mat = mul_mat(elem_mat, inv_mat)
-    for j in range(len(mat)-1, 0, -1):
-        for i in range(j-1, -1, -1):
-            elem_mat = init_id_mat(len(mat))
-            elem_mat[i][j] = -mat[i][j]/mat[j][j]
-            mat = mul_mat(elem_mat, mat)
-            inv_mat = mul_mat(elem_mat, inv_mat)
-    return inv_mat
-
-
-def determinant(mat):
-    def sub_mat_for_det(piv):
-        def remove_row(x, i):
-            new_mat = x.copy()
-            new_mat.pop(i)
-            return new_mat
-
-        def remove_col(x, i):
-            new_mat = x.copy()
-            for _ in range(len(new_mat)):
-                new_mat[_] = new_mat[_][:i] + new_mat[_][i + 1:]
-            return new_mat
-        new_mat = remove_row(mat, 0)
-        new_mat = remove_col(new_mat, piv)
-        return new_mat
-    if len(mat) == 2:
-        return mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0]
-    sign = 1
-    det = 0
-    for i in range(len(mat[0])):
-        det += sign * mat[0][i] * determinant(sub_mat_for_det(i))
-        sign *= -1
-    return det
 
 def yakobi(mat, vec_b):
     global epsilon
@@ -177,9 +92,6 @@ def yakobi(mat, vec_b):
     #yakobi G and H mats
     g_mat = minus_mat(mul_mat(d_mat, add_mat(l_mat, u_mat)))
     h_mat = d_mat
-    #gaos G and H mats, dont work, dividing by zero error
-    #g_mat =mul_mat(minus_mat(add_mat(l_mat,d_mat)), u_mat)
-    #h_mat =invert_mat(add_mat(l_mat,d_mat))
     print("", end="\t")
     for i in range(size):
         print(f"X{i + 1}", end="\t\t")
@@ -188,22 +100,142 @@ def yakobi(mat, vec_b):
 
 
 
-def example(example_mat, vector_b):
-    print_mat(example_mat, vector_b)
-    if determinant(example_mat) == 0:
-        print("determinant = 0, cant find A ^ (-1)")
+def way_A(mat, b):
+    inv_mat = invert_mat(mat)
+    return mul_mat(inv_mat, b)
+
+def mul_mat(mat1, mat2):
+    def get_col(mat, i):
+        col = []
+        for _ in mat:
+            col.append(_[i])
+        return col
+
+    def mul_row_col(row, col):
+        x = 0
+        for i in range(len(row)):
+            x += row[i] * col[i]
+        return x
+
+    if len(mat1[0]) != len(mat2):
+        print("Can't multiply this matrix!")
+        return None
+    new_mat = []
+    for i in range(len(mat1)):
+        row = []
+        for j in range(len(mat2[0])):
+            row.append(mul_row_col(mat1[i], get_col(mat2, j)))
+        new_mat.append(row)
+    return new_mat
+
+
+def invert_mat(mat):
+    inv_mat = init_id_mat(len(mat))
+    for j in range(len(mat)):
+        for i in range(j, len(mat)):
+            elem_mat = init_id_mat(len(mat))
+            if i == j:
+                max_piv = abs(mat[i][i])
+                max_index = i
+                for k in range(i + 1, len(mat)):
+                    if abs(mat[k][j]) > max_piv:
+                        max_index = k
+                        max_piv = abs(mat[k][j])
+                if max_index != i:
+                    mat[i], mat[max_index] = mat[max_index], mat[i]
+                    inv_mat[i], inv_mat[max_index] = inv_mat[max_index], inv_mat[i]
+                elem_mat[i][i] = 1/mat[i][i]
+                mat = mul_mat(elem_mat, mat)
+                inv_mat = mul_mat(elem_mat, inv_mat)
+            else:
+                elem_mat[i][j] = -mat[i][j]/mat[j][j]
+                mat = mul_mat(elem_mat, mat)
+                inv_mat = mul_mat(elem_mat, inv_mat)
+    for j in range(len(mat)-1, 0, -1):
+        for i in range(j-1, -1, -1):
+            elem_mat = init_id_mat(len(mat))
+            elem_mat[i][j] = -mat[i][j]/mat[j][j]
+            mat = mul_mat(elem_mat, mat)
+            inv_mat = mul_mat(elem_mat, inv_mat)
+    return inv_mat
+def suffix(num, time):
+    def num_after_point(x):
+        s = str(x)
+        if not '.' in s:
+            return 0
+        return len(s) - s.index('.') - 1
+
+    def eps():
+        eps = 1
+        while 1 + eps > 1:
+            eps /= 2
+        eps *= 2
+        return eps
+    #time format: ddhhmm
+    num = float(num)
+    singed = False
+    if num < 0:
+        singed = True
+        num *= -1
+    suf = []
+    suf[:0] = str(time)
+    suf = [0, 0, 0, 0, 0] + suf
+    listok = []
+    listok = str(num).split(".")
+    if len(listok[1]) == 1:
+        if int(listok[1][0]) == 0:
+            ans = int(listok[0]) + (float(time)/10000000000)
+        else:
+            ans = int(listok[0]) + (float(listok[1])/10) + (float(time)/1000000000000)
+        if singed:
+            return ans * -1
+        else:
+            return ans
+    x = []
+    x[:0] = listok[1]
+    num_pref = len(listok[0])
+    max_digits = num_after_point(eps()) - 1 - len(listok[0]) - 11
+    x = x[0:max_digits - 1]
+    last_digit = int(x[-1])
+    if last_digit == 0 or last_digit < 5:
+        x.pop(-1)
     else:
-        print("===========================================")
-        print("A_inv * b:\n")
-        print_vec(way_A(example_mat,vector_b))
-        print("===========================================")
-    t1, t2 = yakobi(example_mat, vector_b)
-    print("Jacobi solved in {0} attempts.".format(t2))
-    print_vec(t1)
+        x.pop(-1)
+        x[-1] = int(x[-1]) + 1
+    listok[1] = x + suf
+    tmp = str(listok[0]) + '.'
+    while len(listok[1]) != 0:
+        tmp += str(listok[1][0])
+        listok[1].pop(0)
+    return tmp
+
+
+def main():
+    global epsilon, mat, b, solvable
+    epsilon = 0.00001
+    mat = [[0.04, 0.01, -0.01], [0.2, 0.5, -0.2], [1, 2, 4]]
+    b = [[0.06], [0.3], [11]]
+    print("ex 24")
+    print("Jacobi:")
+    ans_vec, yak_attempts = yakobi(mat, b)
+    for i in range(len(ans_vec)):
+        ans_vec[i][0] = suffix(ans_vec[i][0], 131425)
+    print("yakobi solve in {0} attempts:".format(yak_attempts))
+    print_vec(ans_vec)
+    ans_vec = way_A(mat, b)
+    for i in range(len(ans_vec)):
+        ans_vec[i][0] = suffix(ans_vec[i][0], 131425)
+    print("A_inv * b:")
+    print_vec(ans_vec)
+
+
+
 
 epsilon = 0
-print("ex- 24")
-mat24 = [[0.04, 0.01, -0.01], [0.2, 0.5, -0.2], [1, 2, 4] ]
-b24 = [[0.06], [0.3], [11]]
-#example(mat24, b24)
+mat = []
+b = []
+solvable = True
+main()
+
+
 
