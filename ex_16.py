@@ -1,6 +1,7 @@
 from math import e, exp, ceil
 import sympy as sp
 from sympy import cos, lambdify, log
+from romberg import *
 
 
 def bisection_method(polynom, start, end):
@@ -81,7 +82,7 @@ def main(method):
         solution.append([end, 1])
     for i in solution:
         if i is not None:
-            print("%.5f" % i[0], end=", ")
+            print(suffix(i[0]), end=", ")
             print(f"found in {i[1]} attempts")
 
 
@@ -94,3 +95,8 @@ print("Newton Raphson method")
 main(newton_raphson)
 print("Secant method")
 main(secant_method)
+start = 0.5
+end = 1
+print("Romberg-Simpson:")
+res,num = rumb(polynomial,start,end,eps)
+print("Romberg-Simpson solved in {0} extrapulations, result = {1}".format(num,suffix(res)))

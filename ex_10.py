@@ -1,7 +1,7 @@
 from math import e
 import sympy as sp
 from sympy import lambdify, log
-
+from romberg import *
 
 def newton_raphson(polynom, start, end):
     f = lambdify(x, polynom)
@@ -59,7 +59,7 @@ def main(method):
         solution.append([end, 1])
     for i in solution:
         if i is not None:
-            print("%.5f" % i[0], end=", ")
+            print(suffix(i[0]), end=", ")
             print(f"found in {i[1]} attempts")
 
 
@@ -67,8 +67,13 @@ x = sp.symbols('x')
 polynomial = (x*e**(-x)+log(x**2))*(2*x**3+2*x**2-3*x-5)
 start = 0.1
 end = 1.5
-eps = 10**-10
+eps = 10**-5
 print("Newton Raphson method")
 main(newton_raphson)
 print("Secant method")
 main(secant_method)
+start = 0.5
+end = 1
+print("Romberg-Simpson:")
+res,num = rumb(polynomial,start,end,eps)
+print("Romberg-Simpson solved in {0} extrapulations, result = {1}".format(num,suffix(res)))
