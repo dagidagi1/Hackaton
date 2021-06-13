@@ -40,11 +40,8 @@ def rumb(poly, start, end, eps):
             flag = False
         i += 1
     for _ in t_h:
-        print(_)
+        for __ in _:
+            print(float(__), end = ', ')
+        print()
     return t_h[-1][-1], len(t_h)
 x = sp.symbols('x')
-pol = cos(2*e ** (-2*x))/ (2*x**3 + 5*x**2 - 6)
-start = -0.5
-end = 0.5
-res, num = rumb(pol,start,end,0.000001)
-print("Romberg-Simpson solved in {0} extrapulations, result = {1}".format(num,suffix(res,131931)))
