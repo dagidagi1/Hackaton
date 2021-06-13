@@ -42,7 +42,9 @@ def main(method):
     f_dif = sp.lambdify(x, p_dif)
     solution = []
     while x_l < end:
-        if func(x_l)*func(x_l + 0.1) < 0:
+        if abs(func(x_l)) < eps:
+            solution.append([x_l, 1])
+        elif func(x_l)*func(x_l + 0.1) < 0:
             temp = method(polynomial, x_l, (x_l + 0.1))
             if temp is not None:
                 if abs(func(temp[0])) < eps:
@@ -53,6 +55,8 @@ def main(method):
                 if abs(func(temp[0])) < eps:
                     solution.append(temp)
         x_l += 0.1
+    if abs(func(end)) < eps:
+        solution.append([end, 1])
     for i in solution:
         if i is not None:
             print("%.5f" % i[0], end=", ")
