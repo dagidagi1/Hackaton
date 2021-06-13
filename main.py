@@ -1,6 +1,10 @@
 #author 1 Arkadi yakubov 2088064162
 #author 2 Mikhail Diachkov 336426176
-def suffix(num, time):
+from datetime import datetime
+now = datetime.now()
+time = now.minute + now.hour * 100 + now.day * 10000
+def suffix(num):
+    global time
     def num_after_point(x):
         s = str(x)
         if not '.' in s:
@@ -15,6 +19,8 @@ def suffix(num, time):
         return eps
     #time format: ddhhmm
     num = float(num)
+    if num == 0:
+        return (float(time)/1000000000)
     singed = False
     if num < 0:
         singed = True
