@@ -14,19 +14,28 @@ def suffix(num, time):
         eps *= 2
         return eps
     #time format: ddhhmm
+    num = float(num)
+    singed = False
+    if num < 0:
+        singed = True
+        num *= -1
     suf = []
     suf[:0] = str(time)
-    suf = [0,0,0,0,0] + suf
+    suf = [0, 0, 0, 0, 0] + suf
     listok = []
     listok = str(num).split(".")
     if len(listok[1]) == 1:
         if int(listok[1][0]) == 0:
-            return int(listok[0]) + (float(time)/10000000000)
+            ans = int(listok[0]) + (float(time)/10000000000)
         else:
-            return int(listok[0]) + (float(listok[1])/10) + (float(time)/1000000000000)
+            ans = int(listok[0]) + (float(listok[1])/10) + (float(time)/1000000000000)
+        if singed:
+            return ans * -1
+        else:
+            return ans
     x = []
     x[:0] = listok[1]
-    num_suf = len(x)
+    num_pref = len(listok[0])
     max_digits = num_after_point(eps()) - 1 - len(listok[0]) - 11
     x = x[0:max_digits - 1]
     last_digit = int(x[-1])
@@ -36,19 +45,9 @@ def suffix(num, time):
         x.pop(-1)
         x[-1] = int(x[-1]) + 1
     listok[1] = x + suf
-    tmp = int(listok[0])
-    exp = 10 ** -1
-    print(listok)
+    tmp = str(listok[0]) + '.'
     while len(listok[1]) != 0:
-        tmp += int(listok[1][0]) * exp
+        tmp += str(listok[1][0])
         listok[1].pop(0)
-        exp *= 0.1
     return tmp
-
-
-
-
-
-
-print(suffix(3.123123, 131413))
 
